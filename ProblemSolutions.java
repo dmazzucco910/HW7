@@ -1,6 +1,6 @@
 /******************************************************************
  *
- *   YOUR NAME / SECTION NUMBER
+ *   Davide Mazzucco / 001
  *
  *   This java file contains the problem solutions for the methods selectionSort,
  *   mergeSortDivisibleByKFirst, asteroidsDestroyed, and numRescueCanoes methods.
@@ -36,15 +36,23 @@ public class ProblemSolutions {
 
         int n = values.length;
 
-        for (int i = 0; i < n - 1; i++) {
+        for (int i = 0; i < n - 1; i++) {//iterate through each element of the array to put the right number in it
 
-            // YOU CODE GOES HERE -- COMPLETE THE INNER LOOP OF THIS
-            // "SELECTION SORT" ALGORITHM.
-            // DO NOT FORGET TO ADD YOUR NAME / SECTION ABOVE
+            //find index of smallest or largest element in the array depending on the value of ascending
+            int index = i;
+            for (int j = i + 1; j < n; j++) {
+                if ((ascending && values[j] < values[index]) || (!ascending && values[j] > values[index])) {
+                    index = j;
+                }
+            }
+            //Put element at found index at the top of the array by swapping it
+            int num = values[index];
+            values[index] = values[i];
+            values[i] = num;
 
         }
 
-    } // End class selectionSort
+    }
 
 
     /**
@@ -92,17 +100,36 @@ public class ProblemSolutions {
 
     private void mergeDivisbleByKFirst(int arr[], int k, int left, int mid, int right)
     {
-        // YOUR CODE GOES HERE, THIS METHOD IS NO MORE THAN THE STANDARD MERGE PORTION
-        // OF A MERGESORT, EXCEPT THE NUMBERS DIVISIBLE BY K MUST GO FIRST WITHIN THE
-        // SEQUENCE PER THE DISCUSSION IN THE PROLOGUE ABOVE.
-        //
-        // NOTE: YOU CAN PROGRAM THIS WITH A SPACE COMPLEXITY OF O(1) OR O(N LOG N).
-        // AGAIN, THIS IS REFERRING TO SPACE COMPLEXITY. O(1) IS IN-PLACE, O(N LOG N)
-        // ALLOCATES AUXILIARY DATA STRUCTURES (TEMPORARY ARRAYS). IT WILL BE EASIER
-        // TO CODE WITH A SPACE COMPLEXITY OF O(N LOG N), WHICH IS FINE FOR PURPOSES
-        // OF THIS PROGRAMMING EXERCISES.
 
-        return;
+        int[] temparray = new int[right - left + 1]; //create an array to be used for merging
+        int index = 0;
+
+        //index pointers for left and right array starts
+        int i = left;
+        int j = mid + 1;
+
+
+
+        while (i <= mid && arr[i] % k == 0) {//check left side and if any element is divisible  by k and add it
+            temparray[index++] = arr[i++];
+        }
+        while (j <= right && arr[j] % k == 0) {//same for right side
+            temparray[index++] = arr[j++];
+        }
+
+        //now we add all non-divisible elements
+        while (i <= mid || j <= right) {
+            if (i <= mid && (j > right || arr[i] <= arr[j])) {//to ensure correct order add the one from left first in case it is less than right
+                temparray[index++] = arr[i++];
+            } else if (j <= right) {
+                temparray[index++] = arr[j++];
+            }
+        }
+
+        //move from temporary array to actual array to be sorted
+        for (int p = 0; p < temparray.length; p++) {
+            arr[left + p] = temparray[p];
+        }
 
     }
 
@@ -154,9 +181,18 @@ public class ProblemSolutions {
 
     public static boolean asteroidsDestroyed(int mass, int[] asteroids) {
 
-        // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT()
 
-        return false;
+
+        long currentMass = mass;//use the long variable type to not get overflow
+        for (int asteroid : asteroids) {
+            if (currentMass < asteroid) {//check if planet is less than asteroid
+                return false; //planet is destroyed
+            }
+            currentMass += asteroid; //if the asteroid is smaller than the planet it adds the mass
+        }
+        return true; //all asteroids are destroyed
+
+
 
     }
 
@@ -192,11 +228,21 @@ public class ProblemSolutions {
 
     public static int numRescueSleds(int[] people, int limit) {
 
-        // YOUR CODE GOES HERE, CONSIDER USING ARRAYS.SORT
+        Arrays.sort(people);//sort the people array
+        int light = 0;//index of lightest person
+        int heavy = people.length - 1;//index of heaviest person
+        int sleds = 0;
 
-        return -1;
+        while (light <= heavy) {//while we can still go through the array
+            if (people[light] + people[heavy] <= limit) {//if the heaviest and lightest can fit we move on to the next lightest
+                light++;
+            }
+            heavy--; //regardless of is the lightest can get on the sled we will always add the heaviest
+            sleds++;//add a sled for these 1/2 people
+        }
+        return sleds;
 
     }
 
-} // End Class ProblemSolutions
+}
 
